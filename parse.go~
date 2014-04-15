@@ -14,6 +14,9 @@ func GetDataFieldFromFile(file, field string) []string {
 	for _, m := range str3{
 		i :=  LineToMap(m)
 		final := i[field]
+		if final == ""{
+		data = append(data, "empty" )
+		}
 		data = append(data, final )
 	}
 	return data
@@ -24,7 +27,7 @@ func FileToMapPreLine(file string) []map[string]string{
 	str := getFileString(file)
 	str2 := splitToLines(str)
 	_, str3 := trimToContentLines(str2)
-	data := make([]map[string]string, 1400)
+	data := make([]map[string]string, 0)
 	for _, m := range str3{
 		i := LineToMap(m)
 		data = append(data, i)

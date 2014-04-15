@@ -12,14 +12,26 @@ func GetDataFieldFromFile(file, field string) []string {
 	_, str3 := trimToContentLines(str2)
 	var data []string
 	for _, m := range str3{
-		i :=  ToFields(m)
-		n := FindField(i, field)
-		final := FieldValue(n)
+		i :=  LineToMap(m)
+		final := i[field]
 		data = append(data, final )
 	}
 	return data
 
 }
+
+func FileToMapPreLine(file string) []map[string]string{
+	str := getFileString(file)
+	str2 := splitToLines(str)
+	_, str3 := trimToContentLines(str2)
+	data := make([]map[string]string, 1400)
+	for _, m := range str3{
+		i := LineToMap(m)
+		data = append(data, i)
+	}
+	return data
+}
+
 func getFileString(file string) string{
 	bytesStr, _ := ioutil.ReadFile(file)
 	str := string(bytesStr)
@@ -80,9 +92,29 @@ func FindField(fields []string, field string) string{
 func FieldValue(field string) string{
 	i := strings.Index(field, "=")
 	if i>0 {
-		return field[i:]
+		return field[i+1:]
 	}else{
 		return ""
 	}
 }
+
+func LineToMap(line string) map[string]string{
+	fields := ToFields(line)
+	result := FieldsToMap(fields)
+	return result
+}
+
+func FieldsToMap(fields []string)map[string]string {
+	result :=  make(map[string]string)
+	for _, m := range fields{
+		i:= strings.Index(m, "=")
+		if i<0 {
+		}else{
+			n := strings.Replace(m[:i], " ", "", -1)
+			result[n]=m[i+1:]
+		}
+	}
+	return result
+}
+
 

@@ -46,7 +46,10 @@ func FileToMapPreLine(file string) []map[string]string{
 }
 
 func getFileString(file string) string{
-	bytesStr, _ := ioutil.ReadFile(file)
+	bytesStr, er := ioutil.ReadFile(file)
+	if er != nil{
+		return ""
+	}
 	str := string(bytesStr)
 	return str
 }

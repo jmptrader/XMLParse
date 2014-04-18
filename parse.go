@@ -1,3 +1,6 @@
+//The XMLParse pkg contains a handfull of function to 'parse' xml to make the data stored in the tags' attribute usefull.
+//The functions always successed, only files which don't start with the '<?xml ' are cought as not legal, the data returned is up
+//to you to catch if corruped, it is meant to be used as a parse for self created xml
 package XMLParse
 
 import (
@@ -5,12 +8,15 @@ import (
 	"io/ioutil"
 )
 
-
+// Get the data from ONE field in the tags of one xml file returns a empty list if the file does not start with <?xml
 func GetDataFieldFromFile(file, field string) []string {
+	var data []string
 	str := getFileString(file)
+	if !(strings.HasPrefix(str, "<?xml")){
+		return data
+	}
 	str2 := splitToLines(str)
 	_, str3 := trimToContentLines(str2)
-	var data []string
 	for _, m := range str3{
 		i :=  LineToMap(m)
 		final := i[field]
@@ -23,8 +29,12 @@ func GetDataFieldFromFile(file, field string) []string {
 
 }
 
+//Creates a map for each line xml containing the attribute as keys and the string as value, always successeds as well empty map if the file does not start with "<?xml"
 func FileToMapPreLine(file string) []map[string]string{
 	str := getFileString(file)
+	if !(strings.HasPrefix(str, "<?xml")){
+		return make([]map[string]string, 0)
+	}
 	str2 := splitToLines(str)
 	_, str3 := trimToContentLines(str2)
 	data := make([]map[string]string, 0)
@@ -58,6 +68,7 @@ func trimToContentLines(content []string)( []string, []string){
 	return notCon, con
 }
 
+// takes one line of xml and splits the line into a slice of strings each containing the attribute=string
 func ToFields (line string)  []string{
 	var result []string
 	firstWhiteSpace := strings.Index(line, " ")
@@ -82,6 +93,7 @@ func ToFields (line string)  []string{
 	return result
 }
 
+//takes a slice of keys and one field you are looking for and return the field attribute=string  if present otherwise an empty string
 func FindField(fields []string, field string) string{
 	var str string
 	for _ , m := range fields{
@@ -92,6 +104,8 @@ func FindField(fields []string, field string) string{
 	}
 	return str
 }
+
+//Takes a field and return the value as a string
 func FieldValue(field string) string{
 	i := strings.Index(field, "=")
 	if i>0 {
@@ -100,13 +114,14 @@ func FieldValue(field string) string{
 		return ""
 	}
 }
-
+// Takes one line and return a map with attribute as key and string as value 
 func LineToMap(line string) map[string]string{
 	fields := ToFields(line)
 	result := FieldsToMap(fields)
 	return result
 }
 
+//Takes a slice of fields and creates a map of it attribute as key and string as value 
 func FieldsToMap(fields []string)map[string]string {
 	result :=  make(map[string]string)
 	for _, m := range fields{

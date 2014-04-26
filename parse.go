@@ -11,12 +11,12 @@ import (
 // Get the data from ONE field in the tags of one xml file returns a empty list if the file does not start with <?xml
 func GetDataFieldFromFile(file, field string) []string {
 	var data []string
-	str := getFileString(file)
+	str := GetFileString(file)
 	if !(strings.HasPrefix(str, "<?xml")){
 		return data
 	}
-	str2 := splitToLines(str)
-	_, str3 := trimToContentLines(str2)
+	str2 := SplitToLines(str)
+	_, str3 := TrimToContentLines(str2)
 	for _, m := range str3{
 		i :=  LineToMap(m)
 		final := i[field]
@@ -31,12 +31,12 @@ func GetDataFieldFromFile(file, field string) []string {
 
 //Creates a map for each line xml containing the attribute as keys and the string as value, always successeds as well empty map if the file does not start with "<?xml"
 func FileToMapPreLine(file string) []map[string]string{
-	str := getFileString(file)
+	str := GetFileString(file)
 	if !(strings.HasPrefix(str, "<?xml")){
 		return make([]map[string]string, 0)
 	}
-	str2 := splitToLines(str)
-	_, str3 := trimToContentLines(str2)
+	str2 := SplitToLines(str)
+	_, str3 := TrimToContentLines(str2)
 	data := make([]map[string]string, 0)
 	for _, m := range str3{
 		i := LineToMap(m)
@@ -45,7 +45,7 @@ func FileToMapPreLine(file string) []map[string]string{
 	return data
 }
 
-func getFileString(file string) string{
+func GetFileString(file string) string{
 	bytesStr, er := ioutil.ReadFile(file)
 	if er != nil{
 		return ""
@@ -54,11 +54,11 @@ func getFileString(file string) string{
 	return str
 }
 
-func splitToLines( content string) []string{
+func SplitToLines( content string) []string{
 	contentLines := strings.Split(content, "\n")
 	return contentLines
 }
-func trimToContentLines(content []string)( []string, []string){
+func TrimToContentLines(content []string)( []string, []string){
 	var con []string
 	var notCon []string
 	for _,m := range content{
